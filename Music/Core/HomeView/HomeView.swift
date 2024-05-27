@@ -8,16 +8,33 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @State private var isPlayerView = false
+    
     var body: some View {
+        
+        
         ZStack {
             
             LinearGradient(gradient: Gradient(colors: [Color.secondBackground, Color.background]), startPoint: .top, endPoint: .bottom)
             VStack {
                 HeaderView()
-                Spacer()
+                ScrollView (.vertical) {
+                    VStack {
+                        
+                        QuickPicksView(vm: QuickPicksViewModel(), isPlayerView: $isPlayerView)
+                            .padding(.vertical, 30)
+                        
+                        
+                    }
+                }
                 FooterView()
             }
+            
+            
+            
         }
+        
     }
 }
 

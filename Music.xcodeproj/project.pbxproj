@@ -16,6 +16,13 @@
 		49735EE02C003E8400AD26A6 /* HeaderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EDF2C003E8400AD26A6 /* HeaderViewModel.swift */; };
 		49735EE32C0046C400AD26A6 /* FooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EE22C0046C400AD26A6 /* FooterView.swift */; };
 		49735EE52C004E1200AD26A6 /* SongRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EE42C004E1200AD26A6 /* SongRowView.swift */; };
+		49735EE82C0053AF00AD26A6 /* QuickPicksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EE72C0053AF00AD26A6 /* QuickPicksView.swift */; };
+		49735EEA2C0054AB00AD26A6 /* CircledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EE92C0054AB00AD26A6 /* CircledButton.swift */; };
+		49735EEC2C00B85200AD26A6 /* QuickPicksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EEB2C00B85200AD26A6 /* QuickPicksViewModel.swift */; };
+		49735EEF2C00B8B600AD26A6 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EEE2C00B8B600AD26A6 /* Song.swift */; };
+		49735EF12C00BF1900AD26A6 /* SectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EF02C00BF1900AD26A6 /* SectionView.swift */; };
+		49735EF42C02586C00AD26A6 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EF32C02586C00AD26A6 /* PlayerView.swift */; };
+		49735EF82C02647200AD26A6 /* PlayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49735EF72C02647200AD26A6 /* PlayerButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +36,13 @@
 		49735EDF2C003E8400AD26A6 /* HeaderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderViewModel.swift; sourceTree = "<group>"; };
 		49735EE22C0046C400AD26A6 /* FooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FooterView.swift; sourceTree = "<group>"; };
 		49735EE42C004E1200AD26A6 /* SongRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongRowView.swift; sourceTree = "<group>"; };
+		49735EE72C0053AF00AD26A6 /* QuickPicksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPicksView.swift; sourceTree = "<group>"; };
+		49735EE92C0054AB00AD26A6 /* CircledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircledButton.swift; sourceTree = "<group>"; };
+		49735EEB2C00B85200AD26A6 /* QuickPicksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPicksViewModel.swift; sourceTree = "<group>"; };
+		49735EEE2C00B8B600AD26A6 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
+		49735EF02C00BF1900AD26A6 /* SectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionView.swift; sourceTree = "<group>"; };
+		49735EF32C02586C00AD26A6 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		49735EF72C02647200AD26A6 /* PlayerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +75,7 @@
 		49735EC62BFF86F500AD26A6 /* Music */ = {
 			isa = PBXGroup;
 			children = (
+				49735EED2C00B89900AD26A6 /* Models */,
 				49735ED62C003DC600AD26A6 /* Core */,
 				49735ED52C003DBE00AD26A6 /* Components */,
 				49735EC72BFF86F500AD26A6 /* MusicApp.swift */,
@@ -81,7 +96,10 @@
 		49735ED52C003DBE00AD26A6 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				49735EF02C00BF1900AD26A6 /* SectionView.swift */,
 				49735EE42C004E1200AD26A6 /* SongRowView.swift */,
+				49735EE92C0054AB00AD26A6 /* CircledButton.swift */,
+				49735EF72C02647200AD26A6 /* PlayerButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -89,6 +107,8 @@
 		49735ED62C003DC600AD26A6 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				49735EF22C02585900AD26A6 /* PlayerView */,
+				49735EE62C00539800AD26A6 /* QuickPicksView */,
 				49735EDC2C003E6500AD26A6 /* HeaderView */,
 				49735EE12C003E9600AD26A6 /* FooterView */,
 				49735ED72C003DDB00AD26A6 /* HomeView */,
@@ -122,6 +142,31 @@
 			path = FooterView;
 			sourceTree = "<group>";
 		};
+		49735EE62C00539800AD26A6 /* QuickPicksView */ = {
+			isa = PBXGroup;
+			children = (
+				49735EE72C0053AF00AD26A6 /* QuickPicksView.swift */,
+				49735EEB2C00B85200AD26A6 /* QuickPicksViewModel.swift */,
+			);
+			path = QuickPicksView;
+			sourceTree = "<group>";
+		};
+		49735EED2C00B89900AD26A6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				49735EEE2C00B8B600AD26A6 /* Song.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		49735EF22C02585900AD26A6 /* PlayerView */ = {
+			isa = PBXGroup;
+			children = (
+				49735EF32C02586C00AD26A6 /* PlayerView.swift */,
+			);
+			path = PlayerView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -138,6 +183,8 @@
 			dependencies = (
 			);
 			name = Music;
+			packageProductDependencies = (
+			);
 			productName = Music;
 			productReference = 49735EC42BFF86F500AD26A6 /* Music.app */;
 			productType = "com.apple.product-type.application";
@@ -166,6 +213,8 @@
 				Base,
 			);
 			mainGroup = 49735EBB2BFF86F500AD26A6;
+			packageReferences = (
+			);
 			productRefGroup = 49735EC52BFF86F500AD26A6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -195,8 +244,15 @@
 				49735EC82BFF86F500AD26A6 /* MusicApp.swift in Sources */,
 				49735EE02C003E8400AD26A6 /* HeaderViewModel.swift in Sources */,
 				49735EDB2C003E4F00AD26A6 /* HomeViewModel.swift in Sources */,
+				49735EEA2C0054AB00AD26A6 /* CircledButton.swift in Sources */,
 				49735EE32C0046C400AD26A6 /* FooterView.swift in Sources */,
+				49735EEF2C00B8B600AD26A6 /* Song.swift in Sources */,
 				49735ED92C003E3100AD26A6 /* HomeView.swift in Sources */,
+				49735EF42C02586C00AD26A6 /* PlayerView.swift in Sources */,
+				49735EF82C02647200AD26A6 /* PlayerButton.swift in Sources */,
+				49735EE82C0053AF00AD26A6 /* QuickPicksView.swift in Sources */,
+				49735EF12C00BF1900AD26A6 /* SectionView.swift in Sources */,
+				49735EEC2C00B85200AD26A6 /* QuickPicksViewModel.swift in Sources */,
 				49735EE52C004E1200AD26A6 /* SongRowView.swift in Sources */,
 				49735EDE2C003E7800AD26A6 /* HeaderView.swift in Sources */,
 			);

@@ -16,15 +16,17 @@ struct SongRowView: View {
         HStack {
             Rectangle()
                 .fill(Color.secondaryText)
-                .frame(width: 65, height: 65)
+                .cornerRadius(5)
+                .frame(width: 60, height: 60)
                 .padding(.trailing, 6)
+                
             
             VStack (alignment: .leading) {
                 Text(songName)
-                    .fontWeight(.semibold)
-                    .font(.title3)
+                    .fontWeight(.bold)
+                    .font(.headline)
                     .foregroundStyle(Color.text)
-                    .lineLimit(2)
+                    .lineLimit(1)
                     
                 
                 Text(bandName)

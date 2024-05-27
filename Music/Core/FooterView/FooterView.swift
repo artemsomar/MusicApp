@@ -30,10 +30,7 @@ struct FooterView: View {
                         .font(.title2)
                     Text("Samples")
                         .font(.subheadline)
-                        .foregroundStyle(Color.text)
                 }
-                
-                
                 
                 Spacer()
                 
@@ -42,7 +39,6 @@ struct FooterView: View {
                         .font(.title2)
                     Text("Explore")
                         .font(.subheadline)
-                        .foregroundStyle(Color.text)
                 }
                 
                 
@@ -54,7 +50,6 @@ struct FooterView: View {
                         .font(.title2)
                     Text("Library")
                         .font(.subheadline)
-                        .foregroundStyle(Color.text)
                 }
                 
                 Spacer()
