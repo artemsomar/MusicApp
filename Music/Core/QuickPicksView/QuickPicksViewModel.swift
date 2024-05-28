@@ -27,11 +27,11 @@ class QuickPicksViewModel: ObservableObject {
     var sections: [[Song]] = []
     
     init() {
-        devideToSections()
+        divideToSections()
         
     }
     
-    private func devideToSections() {
+    private func divideToSections() {
         var sectionSongs: [Song] = []
         for index in 0..<allPicksSongs.count {
             

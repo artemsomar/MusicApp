@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @StateObject private var apiService = SpotifyApiService()
     @State private var isPlayerView = false
     
     var body: some View {

@@ -12,12 +12,15 @@ struct QuickPicksView: View {
     @StateObject var vm: QuickPicksViewModel
     @State var currentId: Int = 0
     @State var offset: CGSize = .zero
+    @State var demonstrationSong: Song = Song(songName: "error", bandName: "error")
     
     @Binding var isPlayerView: Bool
     
     var body: some View {
         VStack {
-            
+//            Text("\(offset.width)")
+//                .font(.title)
+//                .foregroundStyle(Color.text)
             Text("Start radio based on a song")
                 .textCase(.uppercase)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -37,7 +40,7 @@ struct QuickPicksView: View {
                     
                     HStack (spacing: 20){
                         ForEach(0..<vm.sections.count, id: \.self) { index in
-                            SectionView(sectionSongs: vm.sections[index], isPlayerView: $isPlayerView)
+                            SectionView(demonstrationSong: $demonstrationSong, sectionSongs: vm.sections[index], isPlayerView: $isPlayerView)
                                 .frame(width: UIScreen.main.bounds.width * 0.95)
                                 .id(index)
                         }
@@ -45,7 +48,7 @@ struct QuickPicksView: View {
                     .offset(offset)
                 }
                 
-                .disabled(true)
+                .scrollDisabled(true)
                 .gesture(
                     DragGesture()
                         .onChanged({ value in
@@ -73,7 +76,7 @@ struct QuickPicksView: View {
                                     }
                                 }
                             }
-                            if currentId != vm.sections.count {
+                            if currentId != vm.sections.count - 1 {
                                 if value.translation.width < -50 {
                                     withAnimation(.easeOut) {
                                         proxy.scrollTo(currentId + 1, anchor: .leading)
@@ -103,11 +106,11 @@ struct QuickPicksView: View {
     }
 }
 
-//#Preview {
-//
-//    ZStack {
-//        Color.background
-//
-//        QuickPicksView(vm: QuickPicksViewModel())
-//    }
-//}
+#Preview {
+
+    ZStack {
+        Color.background
+
+        QuickPicksView(vm: QuickPicksViewModel(), isPlayerView: .constant(false))
+    }
+}

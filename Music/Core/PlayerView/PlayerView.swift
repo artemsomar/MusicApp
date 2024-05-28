@@ -9,8 +9,9 @@ import SwiftUI
 
 struct PlayerView: View {
     
-    var song: Song
+    @Binding var song: Song
     @State var sliderValue: Double = 0.5
+    @Binding var isPlayerView: Bool
     
     var body: some View {
         ZStack {
@@ -22,6 +23,9 @@ struct PlayerView: View {
                     Image(systemName: "chevron.down")
                         .font(.title2)
                         .foregroundColor(Color.text)
+                        .onTapGesture {
+                            isPlayerView = false
+                        }
                     
                     Spacer()
                     Image(systemName: "ellipsis")
@@ -177,5 +181,5 @@ struct PlayerView: View {
 }
 
 #Preview {
-    PlayerView(song: Song(songName: "...And so It Was", bandName: "$uicideboy$"))
+    PlayerView(song: .constant(Song(songName: "...And so It Was", bandName: "$uicideboy$")), isPlayerView: .constant(false))
 }
