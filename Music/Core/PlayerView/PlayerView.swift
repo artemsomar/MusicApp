@@ -9,9 +9,17 @@ import SwiftUI
 
 struct PlayerView: View {
     
-    @Binding var song: Song
+    @Binding var song: Track?
     @State var sliderValue: Double = 0.5
     @Binding var isPlayerView: Bool
+    
+    @StateObject var viewModel: PlayerViewModel
+    
+    init(song: Binding<Track?>, isPlayerView: Binding<Bool>) {
+        self._song = song
+        self._isPlayerView = isPlayerView
+        _viewModel = StateObject(wrappedValue: PlayerViewModel(url: song.wrappedValue?.album.images[0].url ?? ""))
+    }
     
     var body: some View {
         ZStack {
@@ -35,151 +43,194 @@ struct PlayerView: View {
                     
                 }
                 .padding(.horizontal, 24)
-                .padding(.bottom, 20)
+                .padding(.bottom, 30)
                 .padding(.top, 10)
                 
-                Rectangle()
-                    .fill(Color.secondaryText)
-                    .cornerRadius(18)
-                    .frame(width: UIScreen.main.bounds.width - 72 < 400 ? UIScreen.main.bounds.width - 72 : 400, height: UIScreen.main.bounds.width - 72 < 400 ? UIScreen.main.bounds.width - 72 : 400)
-                
-                
-                
-                Text("\(song.songName)")
-                    .font(.title)
-                    .foregroundStyle(Color.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .fontWeight(.bold)
-                
-                Text("\(song.bandName)")
-                    .font(.title3)
-                    .foregroundStyle(Color.secondaryText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 24)
-                    .fontWeight(.semibold)
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack (spacing: 12) {
-                        HStack {
-                            Image(systemName: "hand.thumbsup")
-                                .padding(.horizontal, 8)
-                            
-                            Rectangle()
-                                .fill(Color.secondaryText)
-                                .frame(width: 2, height: 20)
-                                
-                            Image(systemName: "hand.thumbsdown")
-                                .padding(.horizontal, 8)
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 12)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                        .foregroundColor(Color.text)
+                ZStack {
+                    if let image = viewModel.image {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .cornerRadius(18)
+                            .frame(width: UIScreen.main.bounds.width - 54 < 400 ? UIScreen.main.bounds.width - 54 : 400, height: UIScreen.main.bounds.width - 54 < 400 ? UIScreen.main.bounds.width - 54 : 400)
                         
-                        Image(systemName: "text.bubble")
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 20)
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(20)
-                            .foregroundColor(Color.text)
-                        
-                        HStack {
-                            Image(systemName: "rectangle.stack.badge.plus")
-                                .font(.footnote)
-                            Text("Save")
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                        .foregroundColor(Color.text)
-                        
-                        HStack {
-                            Image(systemName: "arrowshape.turn.up.forward")
-//                                .font(.footnote)
-                            Text("Share")
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                        .foregroundColor(Color.text)
-                        
-                        HStack {
-                            Image(systemName: "arrow.down")
-                            Text("Download")
-                        }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(20)
-                        .foregroundColor(Color.text)
-                        
+                    } else {
+                        Rectangle()
+                            .fill(Color.secondaryText)
+                            .cornerRadius(18)
+                            .frame(width: UIScreen.main.bounds.width - 72 < 400 ? UIScreen.main.bounds.width - 72 : 400, height: UIScreen.main.bounds.width - 72 < 400 ? UIScreen.main.bounds.width - 72 : 400)
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical)
-                
-                VStack (spacing: 0) {
-                    Slider(value: $sliderValue)
-                        .accentColor(Color.text)
-                    HStack {
-                        Text("1:34")
-                        Spacer()
-                        Text("3:05")
-                    }
-                    .font(.caption)
-                    .foregroundColor(Color.text)
+                .task {
+                    await viewModel.fetchImage()
                 }
-                .padding(.horizontal, 24)
                 
-                HStack {
-                    Spacer()
-                    Image(systemName: "shuffle")
-                        .font(.title)
-                    
-                    Spacer()
-                    Image(systemName: "backward.end")
-                        .font(.title)
-                    
-                    Spacer()
-                    Image(systemName: "play.circle.fill")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                    
-                    Spacer()
-                    Image(systemName: "forward.end")
-                        .font(.title)
-                    
-                    Spacer()
-                    Image(systemName: "repeat")
-                        .font(.title)
-                    Spacer()
-                }
-                .foregroundColor(Color.text)
+                
+                songNameView
+                
+                likesScrollMenuView
+                
+                sliderView
+                
+                playerInteractionView
+                
                 
                 Spacer()
                 
-                HStack {
-                    Spacer()
-                    Text("Up next")
-                    Spacer()
-                    Text("Lyrics")
-                    Spacer()
-                    Text("Related")
-                    Spacer()
-                }
-                .textCase(.uppercase)
-                .font(.callout)
-                .foregroundColor(Color.text)
+                footerView
             }
         }
     }
 }
 
 #Preview {
-    PlayerView(song: .constant(Song(songName: "...And so It Was", bandName: "$uicideboy$")), isPlayerView: .constant(false))
+    PlayerView(song: .constant(PreviewManager.getDefaultTrack()), isPlayerView: .constant(true))
+}
+
+extension PlayerView {
+    
+    var songNameView: some View {
+        VStack (spacing: 8) {
+            Text(song?.name ?? "error")
+                .font(.title2)
+                .foregroundStyle(Color.text)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
+                .fontWeight(.bold)
+                .lineLimit(1)
+            
+            Text(song?.artists.map { "\($0.name)" }.joined(separator: " & ") ?? "error")
+                .font(.headline)
+                .foregroundStyle(Color.secondaryText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .fontWeight(.semibold)
+                .lineLimit(2)
+        }
+    }
+    
+    var likesScrollMenuView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack (spacing: 12) {
+                HStack {
+                    Image(systemName: "hand.thumbsup")
+                        .padding(.horizontal, 8)
+                        .font(.callout)
+                    
+                    Rectangle()
+                        .fill(Color.secondaryText)
+                        .frame(width: 2, height: 16)
+                        
+                    Image(systemName: "hand.thumbsdown")
+                        .padding(.horizontal, 8)
+                        .font(.callout)
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 8)
+                .background(.ultraThinMaterial)
+                .cornerRadius(16)
+                .foregroundColor(Color.text)
+
+                
+                HStack {
+                    Image(systemName: "rectangle.stack.badge.plus")
+                        .font(.footnote)
+                    Text("Save")
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+                .foregroundColor(Color.text)
+                .font(.callout)
+                
+                HStack {
+                    Image(systemName: "arrowshape.turn.up.forward")
+//                                .font(.footnote)
+                    Text("Share")
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+                .foregroundColor(Color.text)
+                .font(.callout)
+                
+                HStack {
+                    Image(systemName: "arrow.down")
+                    Text("Download")
+                }
+                .padding(.vertical, 6)
+                .padding(.horizontal, 16)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+                .foregroundColor(Color.text)
+                .font(.callout)
+                
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical)
+    }
+    
+    var sliderView: some View {
+        VStack (spacing: 0) {
+            Slider(value: $sliderValue)
+                .accentColor(Color.text)
+                
+            HStack {
+                Text("1:34")
+                Spacer()
+                Text("3:05")
+            }
+            .font(.caption)
+            .foregroundColor(Color.text)
+        }
+        .padding(.horizontal, 24)
+    }
+    
+    var playerInteractionView: some View {
+            
+            HStack {
+                Spacer()
+                Image(systemName: "shuffle")
+                    .font(.title2)
+                
+                Spacer()
+                Image(systemName: "backward.end")
+                    .font(.title2)
+                
+                Spacer()
+                Image(systemName: "play.circle.fill")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                
+                Spacer()
+                Image(systemName: "forward.end")
+                    .font(.title2)
+                
+                Spacer()
+                Image(systemName: "repeat")
+                    .font(.title2)
+                Spacer()
+            }
+            .foregroundColor(Color.text)
+    }
+    
+    var footerView: some View {
+        HStack {
+            Spacer()
+            Text("Up next")
+            Spacer()
+            Text("Lyrics")
+            Spacer()
+            Text("Related")
+            Spacer()
+        }
+        .textCase(.uppercase)
+        .font(.subheadline)
+        .foregroundColor(Color.text)
+        .fontWeight(.semibold)
+    }
 }

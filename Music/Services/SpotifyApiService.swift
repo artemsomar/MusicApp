@@ -5,61 +5,80 @@
 //  Created by Artem Somar on 28.05.2024.
 //
 
-import Foundation
+import SwiftUI
 import Combine
 
+//@MainActor
 class SpotifyApiService: ObservableObject {
     
+    private let clientID = "4ab986c323ee4ba6b93e0f8d2797adac"
+    private let clientSecret = "8edd4fbf6a6041f2b087664458bf1bb2"
+    private let redirectURI = "http://localhost:8000"
     
-    var subscription: AnyCancellable?
+    var authorizationCode: String?
+    private var accessToken: String?
+    private var refreshToken: String?
     
-    init() {
-        getSpotifyAccessToken(authorizationCode: "AQDmbZaj7wotA6YOPAPdbFHpTHUd1_6i12BXkfmb_Fquou1vr0vq9dv-4COjqCb3Wjnccu-jzmWEkNfP-G_7zP1dUqfQdSy3803EyEy8UcDA7bZcKTK-mruLyXq7r6xcFrSKx4FtKfx85VqpPWl-46MWGjP_e5x5hlFuIA5K8OZLK3okaqnb0co7jhhTLB6-KjKys-Nwo1AtAy4C9Q")
+    func fetchAllData() async {
+        
     }
     
-    func getSpotifyAccessToken(authorizationCode: String) {
-        let clientID = "d748de4ed133407f80d1bcb63e913393"
-        let clientSecret = "e2c3cdd17001407da58e4fd21b6101ff"
-        let redirectURI = "http://localhost:3000"
+    func fetchUserData() async -> User? {
+        guard
+            let url = URL(string: "https://api.spotify.com/v1/me"),
+            let token = accessToken
+        else { return nil }
         
-        let tokenURL = URL(string: "https://accounts.spotify.com/api/token")!
+        do {
+            let data = try await NetworkingManager.download(url: url, token: token)
+            let returnedUser = try JSONDecoder().decode(User.self, from: data)
+            
+            return returnedUser
+        } catch {
+            print("Error fetching user data: \(error.localizedDescription)")
+        }
+        return nil
+    }
+    
+    func fetchQuickPicsSongs() async -> SongsList? {
         
-        var request = URLRequest(url: tokenURL)
-        request.httpMethod = "POST"
-        
-        let bodyParams = [
-            "grant_type": "authorization_code",
-            "code": authorizationCode,
-            "redirect_uri": redirectURI,
-            "client_id": clientID,
-            "client_secret": clientSecret
+        var components = URLComponents(string: "https://api.spotify.com/v1/recommendations")!
+        components.queryItems = [
+            URLQueryItem(name: "seed_artists", value: "4NHQUGzhtTLFvgF5SZesLK"),
+            URLQueryItem(name: "seed_genres", value: "classical%2Ccountry"),
+            URLQueryItem(name: "seed_tracks", value: "0c6xIDDpzE81m2q797ordA")
         ]
         
-        request.httpBody = bodyParams
-            .map { "\($0.key)=\($0.value)" }
-            .joined(separator: "&")
-            .data(using: .utf8)
+        guard
+            let url = components.url,
+            let token = self.accessToken
+        else { return nil }
         
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let data = data, error == nil else {
-                print("Error: \(error?.localizedDescription ?? "No data")")
-                return
-            }
+        do {
+            let data = try await NetworkingManager.download(url: url, token: token)
             
-            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-               let accessToken = json["access_token"] as? String {
-                print("Access Token: \(accessToken)")
-            } else {
-                print("Failed to parse token")
-            }
+            let returnedList = try JSONDecoder().decode(SongsList.self, from: data)
+            
+            return returnedList
+        } catch {
+            print("Error fetching Quick Pics Songs: \(error) \(error.localizedDescription)")
         }
         
-        task.resume()
+        return nil
     }
-
-    // Виклик функції з вашим кодом авторизації
     
-    
+    func getAccessToken() async {
+        guard let authorizationCode = authorizationCode else {
+            return
+        }
+        do {
+            let (accessToken, refreshToken) = try await TokenManager.getSpotifyAccessToken(authorizationCode: authorizationCode, clientID: clientID, clientSecret: clientSecret, redirectURI: redirectURI, tokenURL: "https://accounts.spotify.com/api/token")
+            self.accessToken = accessToken
+            print(accessToken)
+            self.refreshToken = refreshToken
+        } catch {
+            print("Error getting access token: \(error.localizedDescription)")
+        }
+    }
 }
+

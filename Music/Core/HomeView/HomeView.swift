@@ -6,15 +6,16 @@
 //
 
 import SwiftUI
+import Combine
 
 struct HomeView: View {
     
-    @StateObject private var apiService = SpotifyApiService()
     @State private var isPlayerView = false
+    @State private var authorizationCode: String? = nil
+    @EnvironmentObject var apiService: SpotifyApiService
     
     var body: some View {
-        
-        
+               
         ZStack {
             
             LinearGradient(gradient: Gradient(colors: [Color.secondBackground, Color.background]), startPoint: .top, endPoint: .bottom)
@@ -22,23 +23,23 @@ struct HomeView: View {
                 HeaderView()
                 ScrollView (.vertical) {
                     VStack {
-                        
-                        QuickPicksView(vm: QuickPicksViewModel(), isPlayerView: $isPlayerView)
+                        QuickPicksView(apiService: apiService, isPlayerView: $isPlayerView)
                             .padding(.vertical, 30)
-                        
-                        
+                            
                     }
                 }
+                
                 FooterView()
             }
             
             
+        }
+        .task {
             
         }
-        
     }
 }
-
-#Preview {
-    HomeView()
-}
+//
+//#Preview {
+//    HomeView()
+//}

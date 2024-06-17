@@ -10,36 +10,82 @@ import SwiftUI
 
 class QuickPicksViewModel: ObservableObject {
     
-    var allPicksSongs: [Song] = [Song(songName: "...And so It Was", bandName: "$uicideboy$"),
-                                 Song(songName: "no!", bandName: "Two:22"),
-                                 Song(songName: "Cumberland Gap", bandName: "David Rawlings"),
-                                 Song(songName: "ASTRO", bandName: "IVOXYGEN"),
-                                 Song(songName: "La La La", bandName: "Naughty Boy"),
-                                 Song(songName: "rockstar (feat. 21 Savage)", bandName: "Post Malone"),
-                                 Song(songName: "Limbo", bandName: "Freddie Dredd"),
-                                 Song(songName: "TEEN", bandName: "IVOXYGEN"),
-                                 Song(songName: "By the Sword", bandName: "Iamjackhill"),
-                                 Song(songName: "Leedle Leedle Lee", bandName: "TrippyTheKid"),
-                                 Song(songName: "Us & Funs", bandName: "SebaLazi"),
-                                 Song(songName: "ecstacy (slowed)", bandName: "SUICIDAL-IDOL"),
-                                 Song(songName: "WhereTheTreesMeetTheFreeway", bandName: "BONES")]
+    @Published var currentId: Int = 0
+    @Published var offset: CGSize = .zero
+    @Published var songsList: SongsList?
     
-    var sections: [[Song]] = []
+    var apiService: SpotifyApiService
     
-    init() {
-        divideToSections()
+    var sections: [[Track]] = []
+    
+    init(apiService: SpotifyApiService) {
+        self.apiService = apiService
+    }
+    
+    func fetchSongs() async {
+        let fetchedSongsList = await apiService.fetchQuickPicsSongs()
+        await MainActor.run {
+            songsList = fetchedSongsList
+            let songsArray = transormSongsToArray()
+            divideToSections(songsArray: songsArray)
+        }
         
     }
     
-    private func divideToSections() {
-        var sectionSongs: [Song] = []
-        for index in 0..<allPicksSongs.count {
+    private func transormSongsToArray() -> [Track] {
+        guard let songsList = songsList else { return []}
+        return songsList.tracks
+    }
+    
+    private func divideToSections(songsArray: [Track]) {
+        var sectionSongs: [Track] = []
+        for index in 0..<songsArray.count {
             
             if index != 0 && index % 4 == 0 {
                 sections.append(sectionSongs)
                 sectionSongs = []
             }
-            sectionSongs.append(allPicksSongs[index])
+            sectionSongs.append(songsArray[index])
+        }
+    }
+    
+    func onChangeDragGesture(value: DragGesture.Value) {
+        withAnimation(.spring) {
+            if currentId == 0 && value.translation.width > 0 {
+                offset.width = 0
+            } else if currentId == sections.count - 1 && value.translation.width < 0 {
+                offset.width = 0
+            } else {
+                offset.width = value.translation.width
+            }
+        }
+    }
+    
+    func onEndedDragGesture(proxy: ScrollViewProxy, value: DragGesture.Value) {
+        if currentId != 0  {
+            if value.translation.width > 50 {
+                withAnimation(.easeOut) {
+                    proxy.scrollTo(currentId - 1, anchor: .leading)
+                    currentId -= 1
+                }
+            } else {
+                withAnimation(.easeOut) {
+                    offset.width = 0
+                }
+            }
+        }
+        if currentId != sections.count - 1 {
+            if value.translation.width < -50 {
+                withAnimation(.easeOut) {
+                    proxy.scrollTo(currentId + 1, anchor: .leading)
+                    currentId += 1
+                    offset.width = 0
+                }
+            } else {
+                withAnimation(.easeOut) {
+                    offset.width = 0
+                }
+            }
         }
     }
 }

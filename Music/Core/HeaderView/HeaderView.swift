@@ -9,6 +9,9 @@ import SwiftUI
 
 struct HeaderView: View {
     
+    @EnvironmentObject var apiService: SpotifyApiService
+    @StateObject var vm = HeaderViewModel()
+    
     var body: some View {
         ZStack {
             
@@ -39,12 +42,13 @@ struct HeaderView: View {
         }
         .frame(height: 50)
         
+        
     }
 }
-
-#Preview {
-    VStack {
-        HeaderView()
-        Spacer()
-    }
-}
+//
+//#Preview {
+//    VStack {
+//        HeaderView()
+//        Spacer()
+//    }
+//}

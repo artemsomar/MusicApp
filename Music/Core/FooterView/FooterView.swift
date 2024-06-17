@@ -62,10 +62,10 @@ struct FooterView: View {
     }
 }
 
-#Preview {
-    VStack {
-        Spacer()
-        FooterView()
-    }
-    
-}
+//#Preview {
+//    VStack {
+//        Spacer()
+//        FooterView()
+//    }
+//    
+//}

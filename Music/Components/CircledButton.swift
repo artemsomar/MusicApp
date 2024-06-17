@@ -24,11 +24,11 @@ struct CircledButton: View {
     }
 }
 
-#Preview {
-    
-    ZStack {
-        Color.background
-        
-        CircledButton(text: "Play all")
-    }
-}
+//#Preview {
+//    
+//    ZStack {
+//        Color.background
+//        
+//        CircledButton(text: "Play all")
+//    }
+//}

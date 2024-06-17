@@ -9,18 +9,21 @@ import SwiftUI
 
 struct QuickPicksView: View {
     
+    @EnvironmentObject var apiService: SpotifyApiService
     @StateObject var vm: QuickPicksViewModel
-    @State var currentId: Int = 0
-    @State var offset: CGSize = .zero
-    @State var demonstrationSong: Song = Song(songName: "error", bandName: "error")
+    
+    @State var demonstrationSong: Track? = nil
     
     @Binding var isPlayerView: Bool
     
+    init(apiService: SpotifyApiService, isPlayerView: Binding<Bool>) {
+        _vm = StateObject(wrappedValue: QuickPicksViewModel(apiService: apiService))
+        self._isPlayerView = isPlayerView
+    }
+    
     var body: some View {
         VStack {
-//            Text("\(offset.width)")
-//                .font(.title)
-//                .foregroundStyle(Color.text)
+
             Text("Start radio based on a song")
                 .textCase(.uppercase)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -45,57 +48,24 @@ struct QuickPicksView: View {
                                 .id(index)
                         }
                     }
-                    .offset(offset)
+                    .offset(vm.offset)
                 }
                 
                 .scrollDisabled(true)
                 .gesture(
                     DragGesture()
                         .onChanged({ value in
-                            withAnimation(.spring) {
-                                if currentId == 0 && value.translation.width > 0 {
-                                    offset.width = 0
-                                } else if currentId == vm.sections.count - 1 && value.translation.width < 0 {
-                                    offset.width = 0
-                                } else {
-                                    offset.width = value.translation.width
-                                }
-                            }
+                            vm.onChangeDragGesture(value: value)
                         })
                         .onEnded({ value in
-                            
-                            if currentId != 0  {
-                                if value.translation.width > 50 {
-                                    withAnimation(.easeOut) {
-                                        proxy.scrollTo(currentId - 1, anchor: .leading)
-                                        currentId -= 1
-                                    }
-                                } else {
-                                    withAnimation(.easeOut) {
-                                        offset.width = 0
-                                    }
-                                }
-                            }
-                            if currentId != vm.sections.count - 1 {
-                                if value.translation.width < -50 {
-                                    withAnimation(.easeOut) {
-                                        proxy.scrollTo(currentId + 1, anchor: .leading)
-                                        currentId += 1
-                                        offset.width = 0
-                                    }
-                                } else {
-                                    withAnimation(.easeOut) {
-                                        offset.width = 0
-                                    }
-                                }
-                            }
+                            vm.onEndedDragGesture(proxy: proxy, value: value)
                         })
                 )
             }
             HStack(spacing: 20) {
                 ForEach(0..<vm.sections.count, id: \.self) { index in
                     Capsule()
-                        .fill(index == currentId ? Color.text : Color.secondaryText)
+                        .fill(index == vm.currentId ? Color.text : Color.secondaryText)
                         .frame(width: 32, height: 3)
                         
                 }
@@ -103,14 +73,10 @@ struct QuickPicksView: View {
             .padding(.top, 12)
         }
         .padding(.horizontal)
+        .task {
+            await apiService.getAccessToken()
+            await vm.fetchSongs()
+        }
     }
 }
 
-#Preview {
-
-    ZStack {
-        Color.background
-
-        QuickPicksView(vm: QuickPicksViewModel(), isPlayerView: .constant(false))
-    }
-}

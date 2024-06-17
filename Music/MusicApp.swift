@@ -9,11 +9,25 @@ import SwiftUI
 
 @main
 struct MusicApp: App {
+    
+    @StateObject var apiService = SpotifyApiService()
+    @State var showAuthView: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                HomeView()
+            if showAuthView {
+
+                SpotifyAuthView(showWebView: $showAuthView)
+                    .ignoresSafeArea()
+                    .environmentObject(apiService)
+            } else {
+                NavigationStack {
+                    HomeView()
+                        .environmentObject(apiService)
+                }
             }
+            
+            
             
         }
     }
